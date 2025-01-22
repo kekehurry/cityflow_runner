@@ -1,0 +1,39 @@
+{
+  "name": "cityflow_runner",
+  "version": "1.0.0",
+  "dependencies": {
+    "puppeteer": "^19.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@mui/material": "^5.15.0",
+    "@mui/icons-material": "^5.15.0",
+    "@mui/lab": "^5.0.0-alpha.155",
+    "@mui/x-data-grid": "^6.18.5",
+    "mui-color-input": "^2.0.1",
+    "nanoid": "^5.0.4",
+    "lodash": "^4.17.21",
+    "@turf/turf": "^6.5.0",
+    "deck.gl": "^8.9.32",
+    "@deck.gl/react": "^8.9.32",
+    "@deck.gl/core": "^8.9.32",
+    "@deck.gl/layers": "^8.9.32",
+    "@deck.gl/geo-layers": "^8.9.32",
+    "mapbox-gl": "^3.0.1",
+    "react-map-gl": "^7.1.6",
+    "d3": "^7.8.5",
+    "three": "^0.159.0",
+    "@react-three/cannon": "^6.6.0",
+    "@react-three/drei": "^9.92.1",
+    "@react-three/fiber": "^8.15.12",
+    "@react-three/rapier": "^1.1.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.26.3",
+    "babel-loader": "^9.2.1",
+    "react-scripts": "5.0.0",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1"
+  }
+}

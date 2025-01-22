@@ -1,0 +1,9 @@
+node_modules
+workspace_js
+worspace_py
+Dockerfile
+package-lock.json
+readme.md
+
+.git
+*.DS_Store
