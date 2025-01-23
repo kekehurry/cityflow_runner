@@ -52,7 +52,6 @@ def execute(workspace_path):
 
     with open(os.path.join(workspace_path, 'output'), 'w') as f:
         f.write(json.dumps(props.output))
-        print("Code Executed!")
     return props
 
 if __name__ == '__main__':

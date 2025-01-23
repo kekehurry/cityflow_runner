@@ -3,55 +3,61 @@ const { createHtml, compile } = require('./compile');
 const path = require('path');
 const fs = require('fs');
 
-async function executeHtml(bundleFile) {
+async function executeHtml(bundleFile, run = false) {
   const dirName = path.dirname(bundleFile);
   const outputFile = path.join(dirName, '../output');
   const htmlFile = path.join(dirName, '../index.html');
 
   const html = createHtml(bundleFile);
   fs.writeFileSync(htmlFile, html);
-  console.log('html written to:', htmlFile);
-  const browser = await puppeteer.launch({
-    headless: 'new',
-    args: [
-      '--disable-gpu',
-      '--no-sandbox',
-      '-no-first-run',
-      '--no-zygote',
-      '--single-process',
-      '--disable-dev-shm-usage',
-      '--disable-setuid-sandbox',
-    ],
-  });
-  try {
-    const page = await browser.newPage();
-    await page.setContent(html);
-    //get console output
-    const props = await page.evaluate(() => {
-      return cityflow?.module || {};
+
+  if (run) {
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: [
+        '--disable-gpu',
+        '--no-sandbox',
+        '-no-first-run',
+        '--no-zygote',
+        '--single-process',
+        '--disable-dev-shm-usage',
+        '--disable-setuid-sandbox',
+      ],
     });
-    if (props?.output) {
-      fs.writeFileSync(outputFile, JSON.stringify(props?.output, null, 2));
-      console.log('output written to:', outputFile);
+    try {
+      const page = await browser.newPage();
+      await page.setContent(html);
+      //get console output
+      const props = await page.evaluate(() => {
+        try {
+          return props;
+        } catch (e) {
+          console.error(e);
+          return;
+        }
+      });
+      if (props?.output) {
+        fs.writeFileSync(outputFile, JSON.stringify(props?.output, null, 2));
+      }
+      if (props?.config) {
+        fs.writeFileSync(configFile, JSON.stringify(props?.config, null, 2));
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      await browser.close();
     }
-    if (props?.config) {
-      fs.writeFileSync(configFile, JSON.stringify(props?.config, null, 2));
-    }
-  } catch (error) {
-    console.error(error);
-  } finally {
-    await browser.close();
   }
 }
 
 // Default paths
 const DEFAULT_WORKDIR = './workspace';
-
 const workdir = path.resolve(process.argv[2] || DEFAULT_WORKDIR);
+const run = process.argv[3] && process.argv[3].includes('run');
 const codeFile = path.join(workdir, 'entrypoint');
 const inputFile = path.join(workdir, 'input');
 const configFile = path.join(workdir, 'config');
 
 compile(inputFile, configFile, codeFile).then((bundleFile) =>
-  executeHtml(bundleFile)
+  executeHtml(bundleFile, run)
 );
