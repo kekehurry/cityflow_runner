@@ -40,7 +40,7 @@ def execute(workspace_path):
         props.config = json.load(f)
 
     with open(input_path, 'r') as f:
-        props.input = f.read()
+        props.input = json.load(f)
 
     with open(entrypoint_path, 'r') as f:
         entrypoint = f.read()

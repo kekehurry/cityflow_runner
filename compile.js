@@ -26,25 +26,13 @@ const extractComponentName = (code) => {
     /export\s+default\s+([A-Z][a-zA-Z0-9]*);?\s*$/, // export default Component; or export default ComponentComponent
   ];
 
-  // Check for default exports first
+  // Check for default exports
   for (const pattern of defaultPatterns) {
     const match = code.match(pattern);
     if (match && match[1]) {
       return match[1];
     }
   }
-  // Fallback to checking non-default patterns
-  // const patterns = [
-  //   /function\s+([A-Z][a-zA-Z0-9]*)\s*\(/, // function Component()
-  //   /const\s+([A-Z][a-zA-Z0-9]*)\s*=/, // const Component =
-  // ];
-
-  // for (const pattern of patterns) {
-  //   const match = code.match(pattern);
-  //   if (match && match[1]) {
-  //     return match[1];
-  //   }
-  // }
   return 'CustomModule'; // Fallback name
 };
 
@@ -102,8 +90,8 @@ const wrappedCode = (codeFile) => {
 
   // Define a wrapper component for the dynamically injected module
   const IframeApp = () => {
-    const [input, setInput] = useState(null);
-    const [config, setConfig] = useState(null);
+    const [input, setInput] = useState(window.input||null);
+    const [config, setConfig] = useState(window.config||null);
     const [output, setOutput] = useState(null);
     const [props, setProps] = useState({});
 
@@ -127,6 +115,7 @@ const wrappedCode = (codeFile) => {
 
     useEffect(() => { 
       sendToParent(config, output);
+      window.props = { output };
     }, [config, output]);
 
     useEffect(() => {
@@ -138,7 +127,7 @@ const wrappedCode = (codeFile) => {
     return (
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        {config && module}
+        {props && props.config && module}
       </ThemeProvider>
     );
   };
@@ -160,34 +149,13 @@ const createHtml = (bundleFile) => {
   return html;
 };
 
-const compile = async (inputFile, configFile, codeFile) => {
+const compile = async (codeFile) => {
   // create cityflow.js
   const dirName = path.dirname(codeFile);
   const distFolder = path.join(dirName, 'dist');
   if (!fs.existsSync(distFolder)) {
     fs.mkdirSync(distFolder);
   }
-  // const input = fs.readFileSync(inputFile, 'utf8');
-  // const config = fs.readFileSync(configFile, 'utf8');
-  // const cityflowJS = `
-  // export const cityflow = {
-  //     module: {
-  //       input: ${input},
-  //       config: ${config},
-  //       output: {},
-  //       setOutput: (newOutput) => {
-  //         cityflow.module.output = newOutput;
-  //       },
-  //       setConfig: (newConfig) => {
-  //         cityflow.module.config = { ...cityflow.module.config, ...newConfig };
-  //       },
-  //     },
-  //   };
-  // window.cityflow = cityflow;
-  // `;
-  // const cityflowJSPath = path.join(distFolder, 'cityflow.js');
-  // fs.writeFileSync(cityflowJSPath, cityflowJS);
-
   // Compile React code
   const compiledCode = compileReactCode(wrappedCode(codeFile));
   if (!fs.existsSync(distFolder)) {
@@ -220,8 +188,10 @@ const compile = async (inputFile, configFile, codeFile) => {
           reject(stats.compilation.errors);
         } else {
           const bundleFilePath = path.join(distFolder, 'bundle.js');
-          // console.log('bundle created:', bundleFilePath);
-          resolve(bundleFilePath);
+          const html = createHtml(bundleFilePath);
+          const htmlFile = path.join(distFolder, '../index.html');
+          fs.writeFileSync(htmlFile, html);
+          resolve(html);
         }
       });
     });
@@ -233,5 +203,4 @@ const compile = async (inputFile, configFile, codeFile) => {
 
 module.exports = {
   compile,
-  createHtml,
 };
