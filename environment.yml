@@ -1,5 +1,4 @@
 channels:
   - conda-forge
 dependencies:
-  - osmnx
-  - momepy
+  - python=3.12
