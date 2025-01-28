@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration file
-CONFIG_FILE="setup.json"
+CONFIG_FILE="/cityflow_runner/workflow/setup.json"
 
 # Check if the configuration file exists
 if [[ ! -f "$CONFIG_FILE" ]]; then
