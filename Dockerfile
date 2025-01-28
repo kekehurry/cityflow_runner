@@ -5,7 +5,7 @@ WORKDIR /cityflow_runner
 
 # Install Node.js and system dependencies
 RUN apt-get update && \
-    apt-get install -y curl nodejs npm && \
+    apt-get install -y curl nodejs npm jq && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
