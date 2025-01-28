@@ -10,9 +10,9 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
 fi
 
 # Parse the configuration file
-CONDA_PACKAGES=$(jq -r '.conda[]' "$CONFIG_FILE")
-NPM_PACKAGES=$(jq -r '.npm[]' "$CONFIG_FILE")
-PIP_PACKAGES=$(jq -r '.pip[]' "$CONFIG_FILE")
+CONDA_PACKAGES=$(jq -r '.conda // empty | .[]' "$CONFIG_FILE")
+NPM_PACKAGES=$(jq -r '.npm // empty | .[]' "$CONFIG_FILE")
+PIP_PACKAGES=$(jq -r '.pip // empty | .[]' "$CONFIG_FILE")
 
 # Install conda packages
 if [[ -n "$CONDA_PACKAGES" ]]; then
