@@ -3,3 +3,4 @@ package-lock.json
 workspace_js
 workspace_py
 .DS_Store
+setup.json

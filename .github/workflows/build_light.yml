@@ -21,12 +21,12 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build and Push City Flwo Platform
+    - name: Build and Push CityFlow Runner
       uses: docker/build-push-action@v6.10.0
       with:
         context: ./
         file: ./Dockerfile
-        tags: ghcr.io/kekehurry/cityflow_runner:light
+        tags: ghcr.io/kekehurry/cityflow_runner:latest
         platforms: linux/amd64,linux/arm64
         push: true
         
