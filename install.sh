@@ -38,7 +38,7 @@ fi
 if [[ -n "$PIP_PACKAGES" ]]; then
   echo "Installing pip packages..."
   for pkg in $PIP_PACKAGES; do
-    pip install "$pkg"
+    pip3 install "$pkg" --root-user-action ignore
   done
 else
   echo "No pip packages to install."
