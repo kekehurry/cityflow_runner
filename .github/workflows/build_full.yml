@@ -26,7 +26,7 @@ jobs:
       with:
         context: ./
         file: ./Dockerfile
-        tags: ghcr.io/kekehurry/cityflow_runner
+        tags: ghcr.io/kekehurry/cityflow_runner:full
         platforms: linux/amd64,linux/arm64
         push: true
         
