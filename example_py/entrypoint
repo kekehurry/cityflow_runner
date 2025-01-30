@@ -1,0 +1,8 @@
+import cityflow.module as cm
+
+def main():
+    return {
+        "output": "hello world"
+    }
+
+cm.output = main()
