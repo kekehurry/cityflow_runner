@@ -1,9 +1,10 @@
 node_modules
-workspace_js
-workspace_py
+example_js
+example_py
 Dockerfile
 package-lock.json
 readme.md
+setup.json
 
 .git
 *.DS_Store
