@@ -36,58 +36,122 @@ const extractComponentName = (code) => {
   return 'CustomModule'; // Fallback name
 };
 
-const wrappedCode = (codeFile) => {
-  let moduleCode = fs.readFileSync(codeFile, 'utf8');
-  // Replace `import React, { ... } from 'react';` with only necessary imports
-  moduleCode = moduleCode.replace(
-    /import\s+React,\s*\{([^}]*)\}\s+from\s+['"]react['"];/g,
-    (match, imports) => {
-      // Filter out `useEffect` and `useState` but keep others
-      const filteredImports = imports
-        .split(',')
-        .map((imp) => imp.trim())
-        .filter((imp) => imp !== 'useEffect' && imp !== 'useState')
-        .join(', ');
+const wrappedCode = (entryFile) => {
+  const collectedImports = new Map(); // 存储合并后的导入 {source: {specifiers}}
+  const processImports = (code) => {
+    const result = transformSync(code, {
+      presets: ['@babel/preset-react'],
+      plugins: [
+        () => ({
+          visitor: {
+            ImportDeclaration(path) {
+              const source = path.node.source.value;
+              const specifiers = path.node.specifiers.map((s) => {
+                if (s.type === 'ImportDefaultSpecifier') {
+                  return { type: 'default', local: s.local.name };
+                } else if (s.type === 'ImportNamespaceSpecifier') {
+                  return { type: 'namespace', local: s.local.name };
+                } else {
+                  return {
+                    type: 'named',
+                    imported: s.imported ? s.imported.name : null,
+                    local: s.local.name,
+                  };
+                }
+              });
 
-      // Handle cases where no curly braces are needed
-      return filteredImports
-        ? `import { ${filteredImports} } from 'react';`
-        : '';
-    }
-  );
+              if (!collectedImports.has(source)) {
+                collectedImports.set(source, []);
+              }
+              collectedImports.get(source).push(...specifiers);
+              path.remove();
+            },
+          },
+        }),
+      ],
+    });
+    return result.code;
+  };
 
-  // Handle cases where `import { ... } from 'react';` exists without React
-  moduleCode = moduleCode.replace(
-    /import\s+\{([^}]*)\}\s+from\s+['"]react['"];/g,
-    (match, imports) => {
-      const filteredImports = imports
-        .split(',')
-        .map((imp) => imp.trim())
-        .filter((imp) => imp !== 'useEffect' && imp !== 'useState')
-        .join(', ');
-
-      return filteredImports
-        ? `import { ${filteredImports} } from 'react';`
-        : '';
-    }
-  );
-
-  const moduleName = extractComponentName(moduleCode);
-
-  return `
+  // 处理所有文件
+  let moduleCode = processImports(`
   import ReactDOM from 'react-dom';
   import React, { useEffect, useState } from 'react';
   import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-
   // Create a dark theme
   const darkTheme = createTheme({
     palette: {
       mode: 'dark',
     },
   });
+  `);
+  entryCode = fs.readFileSync(entryFile, 'utf8');
+  moduleCode += processImports(entryCode) + '\n';
 
+  // handle local import
+  collectedImports.forEach((specifiers, source) => {
+    if (source.includes('./')) {
+      const sourcePath = path.join(path.dirname(entryFile), `${source}.js`);
+      const code = fs.readFileSync(sourcePath, 'utf8');
+      moduleCode += processImports(code) + '\n';
+    }
+  });
+
+  let mergedImports = '';
+  collectedImports.forEach((specifiers, source) => {
+    if (!source.includes('./')) {
+      const merged = new Map();
+
+      // Merge imports
+      specifiers.forEach((s) => {
+        let key;
+        if (s.type === 'default') {
+          key = 'default';
+        } else if (s.type === 'namespace') {
+          key = `namespace:${s.local}`;
+        } else {
+          key = `${s.imported}->${s.local}`;
+        }
+        if (!merged.has(key)) merged.set(key, s);
+      });
+
+      // Build import statement
+      const defaultImport = [...merged.values()].find(
+        (s) => s.type === 'default'
+      );
+      const namespaceImport = [...merged.values()].find(
+        (s) => s.type === 'namespace'
+      );
+      const namedImports = [...merged.values()]
+        .filter((s) => s.type === 'named')
+        .map((s) => {
+          if (s.imported === s.local) return s.imported;
+          return `${s.imported} as ${s.local}`;
+        });
+
+      let importStatement = 'import ';
+      if (defaultImport) {
+        importStatement += defaultImport.local;
+        if (namespaceImport || namedImports.length > 0) importStatement += ', ';
+      }
+      if (namespaceImport) {
+        importStatement += `* as ${namespaceImport.local}`;
+        if (namedImports.length > 0) importStatement += ', ';
+      }
+      if (namedImports.length > 0) {
+        importStatement += `{ ${namedImports.join(', ')} }`;
+      }
+      importStatement += ` from '${source}';\n`;
+
+      mergedImports += importStatement;
+    }
+  });
+
+  const moduleName = extractComponentName(moduleCode);
+
+  return `
+  ${mergedImports}
   ${moduleCode}
-
   // Define a wrapper component for the dynamically injected module
   const IframeApp = () => {
     const [input, setInput] = useState(window.input||null);
@@ -140,24 +204,52 @@ const wrappedCode = (codeFile) => {
 
 const createHtml = (bundleFile) => {
   const bundle = fs.readFileSync(bundleFile, 'utf8');
+  const distFolder = path.dirname(bundleFile);
   const html = `
     <div id="iframe_root"></div>
     <script>
       ${bundle}
     </script>
-  `;
+    `;
+  // const input = fs.readFileSync(path.join(distFolder, '../input.json'), 'utf8');
+  // const config = fs.readFileSync(
+  //   path.join(distFolder, '../config.json'),
+  //   'utf8'
+  // );
+  // const html = `
+  //   <!DOCTYPE html>
+  //   <html lang="en">
+  //     <head>
+  //       <meta charset="UTF-8" />
+  //       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  //       <title>CityFlow</title>
+  //       <link
+  //         rel="stylesheet"
+  //         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+  //       />
+  //       <script>
+  //         window.input = ${input};
+  //         window.config = ${config};
+  //       </script>
+  //     </head>
+  //     <body style="margin: 0; padding: 0; overflow: hidden;">
+  //       ${html}
+  //     </body>
+  // `;
+  fs.writeFileSync(path.join(distFolder, '../index.html'), html);
   return html;
 };
 
-const compile = async (codeFile) => {
+const compile = async (entryFile) => {
   // create cityflow.js
-  const dirName = path.dirname(codeFile);
+  const dirName = path.dirname(entryFile);
   const distFolder = path.join(dirName, 'dist');
   if (!fs.existsSync(distFolder)) {
     fs.mkdirSync(distFolder);
   }
   // Compile React code
-  const compiledCode = compileReactCode(wrappedCode(codeFile));
+  const compiledCode = compileReactCode(wrappedCode(entryFile));
+
   if (!fs.existsSync(distFolder)) {
     fs.mkdirSync(distFolder);
   }
@@ -189,8 +281,6 @@ const compile = async (codeFile) => {
         } else {
           const bundleFilePath = path.join(distFolder, 'bundle.js');
           const html = createHtml(bundleFilePath);
-          const htmlFile = path.join(distFolder, '../index.html');
-          fs.writeFileSync(htmlFile, html);
           resolve(html);
         }
       });
@@ -204,8 +294,18 @@ const compile = async (codeFile) => {
 const args = process.argv.slice(2);
 const workdir = path.resolve(args.find((arg) => !arg.startsWith('--')) || './');
 const compileFlag = args.includes('--compile');
-const codeFile = path.join(workdir, 'entrypoint');
+
+const entryFile = path.join(workdir, 'entrypoint.js');
 
 if (compileFlag) {
-  compile(codeFile);
+  try {
+    compile(entryFile);
+  } catch (error) {
+    console.log(error);
+    const htmlFile = path.join(workdir, 'index.html');
+    fs.writeFileSync(
+      htmlFile,
+      `<div id="iframe_root">Compile Error: ${error.message}</div>`
+    );
+  }
 }

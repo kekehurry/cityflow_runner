@@ -5,8 +5,9 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 import ReactDOM from 'react-dom';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import * as d3 from 'd3';
 
 // Create a dark theme
 var darkTheme = createTheme({
@@ -14,13 +15,10 @@ var darkTheme = createTheme({
     mode: 'dark'
   }
 });
-import { useRef } from 'react';
-import * as d3 from 'd3';
 export default function AreaChart(props) {
-  var input = props.input,
-    config = props.config,
-    setOutput = props.setOutput,
-    setConfig = props.setConfig;
+  // const { input, config, setOutput, setConfig } = props;
+  var input = window.input;
+  var config = window.config;
   var ref = useRef();
   var data = input === null || input === void 0 ? void 0 : input.input;
   var offset = d3.stackOffsetNone;
@@ -49,12 +47,15 @@ export default function AreaChart(props) {
       return z(i / n);
     });
   }, [data]);
-  setOutput({
-    "output": "hello world"
-  });
-  return /*#__PURE__*/React.createElement("svg", {
+
+  // setOutput({ output: 'hello world' });
+
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Hello, null), /*#__PURE__*/React.createElement("svg", {
     ref: ref
-  });
+  }));
+}
+export function Hello() {
+  return /*#__PURE__*/React.createElement("h1", null, "Hello!");
 }
 
 // Define a wrapper component for the dynamically injected module

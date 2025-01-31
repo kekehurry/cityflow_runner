@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-
+import { Hello } from './hello';
 
 export default function AreaChart(props) {
-
-  const {input,config,setOutput,setConfig} = props;
-
+  // const { input, config, setOutput, setConfig } = props;
+  const input = window.input;
+  const config = window.config;
   const ref = useRef();
   const data = input?.input;
   const offset = d3.stackOffsetNone;
@@ -53,7 +53,12 @@ export default function AreaChart(props) {
       .attr('fill', (d, i) => z(i / n));
   }, [data]);
 
-  setOutput({"output":"hello world"})
+  // setOutput({ output: 'hello world' });
 
-  return <svg ref={ref}></svg>;
+  return (
+    <>
+      <Hello />
+      <svg ref={ref}></svg>
+    </>
+  );
 }

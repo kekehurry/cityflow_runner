@@ -5,13 +5,13 @@ Cityflow runner is created to execute python and react code for [cityflow_platfo
 
 ## Build
 ```
-docker build -t cityflow-runner:latest .
+docker build -t ghcr.io/kekehurry/cityflow_runner:latest .
 ```
 
 ## Example Usage
 
 Execute `react` code
-```
+``` 
 node execute.js --compile example_js
 ```
 
