@@ -8,4 +8,4 @@ dependencies:
     - geopandas
     - seaborn
     - mesa_geo
-    - memopy
+    - momepy
