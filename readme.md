@@ -1,28 +1,21 @@
-# Build
+# Cityflow Runner
+
+Cityflow runner is created to execute python and react code for [cityflow_platform](https://github.com/kekehurry/cityflow_platform.git)
+
+
+## Build
 ```
-docker build -t cityflow-runner:latest .
+docker build -t ghcr.io/kekehurry/cityflow_runner:latest .
 ```
 
-# Example Usage
+## Example Usage
 
 Execute `react` code
-```
-docker run -it --rm \
--v $(pwd)/workspace_js:/cityflow_runner/workspace \
--v $(pwd)/compile.js:/cityflow_runner/compile.js \
--v $(pwd)/execute.js:/cityflow_runner/execute.js \
-cityflow-runner:latest \
-sh -c "cd /cityflow_runner/workspace && node /cityflow_runner/execute.js ."
+``` 
+node execute.js --compile example_js
 ```
 
 Execute `python` code
 ```
-docker run -it --rm -v $(pwd)/workspace_py:/cityflow_runner/workspace cityflow-runner:latest python execute.py /workspace
-
+python execute.py example_py
 ```
-
-
-docker run -it --rm \
--v $(pwd)/workspace_js:/cityflow_runner/workspace \
-cityflow-runner:latest \
-sh -c "cd /cityflow_runner/workspace && node /cityflow_runner/execute.js ."

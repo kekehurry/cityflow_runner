@@ -3,6 +3,8 @@ import json
 import argparse
 import sys
 from collections import defaultdict
+import os
+import subprocess
 
 class ModuleProps:
         def __init__(self):
@@ -32,9 +34,9 @@ def execute(workspace_path):
     cityflow = CityFlow()
     props = cityflow.module
     
-    config_path = os.path.join(workspace_path, 'config')
-    input_path = os.path.join(workspace_path, 'input')
-    entrypoint_path = os.path.join(workspace_path, 'entrypoint')
+    config_path = os.path.join(workspace_path, 'config.json')
+    input_path = os.path.join(workspace_path, 'input.json')
+    entrypoint_path = os.path.join(workspace_path, 'entrypoint.py')
 
     with open(config_path, 'r') as f:
         props.config = json.load(f)
@@ -47,10 +49,11 @@ def execute(workspace_path):
 
     sys.modules['cityflow'] = cityflow
     sys.modules['cityflow.module'] = cityflow.module
-
+    sys.path.insert(0, workspace_path)
+    
     exec(entrypoint, {'__name__': '__main__'})
 
-    with open(os.path.join(workspace_path, 'output'), 'w') as f:
+    with open(os.path.join(workspace_path, 'output.json'), 'w') as f:
         f.write(json.dumps(props.output))
     return props
 
