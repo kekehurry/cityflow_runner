@@ -3,9 +3,9 @@ channels:
 dependencies:
   - python=3.12
   - osmnx
-  - memopy
   - mesa
-  - mesa_geo
   - pip:
     - geopandas
     - seaborn
+    - mesa_geo
+    - memopy
