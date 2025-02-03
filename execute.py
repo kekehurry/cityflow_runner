@@ -4,26 +4,23 @@ import argparse
 import sys
 from collections import defaultdict
 import os
-import subprocess
 
-class ModuleProps:
-        def __init__(self):
-            self._data = {}
-        
-        def __getattr__(self, name):
-            return self._data.get(name, None)
-        
-        def __setattr__(self, name, value):
-            if name == '_data':
-                super().__setattr__(name, value)
-            else:
-                self._data[name] = value
-        
-        def __str__(self):
-            return json.dumps(self._data)
-        
-        def __repr__(self):
-            return self.__str__()
+class ModuleProps(defaultdict):
+    def __init__(self):
+        super().__init__(ModuleProps)
+    
+    def __getattr__(self, item):
+        try:
+            return self[item]
+        except KeyError:
+            raise AttributeError(f"object has no attribute '{item}'")
+    
+    def __setattr__(self, key, value):
+        self[key] = value
+
+    def __str__(self):
+        return json.dumps(self, default=lambda o: o.__dict__, indent=4)
+    
 
 class CityFlow:
     def __init__(self):
@@ -61,4 +58,4 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Execute cityflow with workspace path')
     parser.add_argument('workspace', help='Path to workspace directory')
     args = parser.parse_args()
-    execute(args.workspace)   
+    execute(args.workspace)  
