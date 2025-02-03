@@ -51,12 +51,10 @@ class DataBase:
         conn.commit()
         conn.close()
     
-    def add_data(self, id, key, value):
-        key = f"{id}/{key}"
+    def add_data(self, key, value):
         self._add_data(key, value)
 
-    def get_data(self, id, key):
-        key = f"{id}/{key}"
+    def get_data(self, key):
         conn = self._create_connection()
         cur = conn.cursor()
         cur.execute("SELECT value FROM cache_data WHERE key=?", (key,))
@@ -67,8 +65,7 @@ class DataBase:
         else:
             return None
     
-    def key_exists(self, id, key):
-        key = f"{id}/{key}"
+    def key_exists(self,key):
         conn = self._create_connection()
         cur = conn.cursor()
         cur.execute("SELECT 1 FROM cache_data WHERE key=?", (key,))
