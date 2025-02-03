@@ -3,8 +3,12 @@ example_js
 example_py
 Dockerfile
 package-lock.json
+
 readme.md
 setup.json
+data.db
+dist
+test
 
 .git
 *.DS_Store
