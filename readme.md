@@ -5,7 +5,7 @@ Cityflow runner is created to execute python and react code for [cityflow_platfo
 
 ## Build
 ```
-docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/kekehurry/cityflow_runner:full .
+docker build -t ghcr.io/kekehurry/cityflow_runner:light .
 ```
 
 ## Example Usage

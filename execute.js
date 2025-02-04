@@ -77,13 +77,6 @@ const wrappedCode = (entryFile) => {
   let moduleCode = processImports(`
   import ReactDOM from 'react-dom';
   import React, { useEffect, useState } from 'react';
-  import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-  // Create a dark theme
-  const darkTheme = createTheme({
-    palette: {
-      mode: 'dark',
-    },
-  });
   `);
   entryCode = fs.readFileSync(entryFile, 'utf8');
   moduleCode += processImports(entryCode) + '\n';
@@ -189,10 +182,7 @@ const wrappedCode = (entryFile) => {
     const module = React.createElement(${moduleName}, props);
 
     return (
-      <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
-        {props && props.config && module}
-      </ThemeProvider>
+        props && props.config && module
     );
   };
 
@@ -211,31 +201,6 @@ const createHtml = (bundleFile) => {
       ${bundle}
     </script>
     `;
-  // const input = fs.readFileSync(path.join(distFolder, '../input.json'), 'utf8');
-  // const config = fs.readFileSync(
-  //   path.join(distFolder, '../config.json'),
-  //   'utf8'
-  // );
-  // const html = `
-  //   <!DOCTYPE html>
-  //   <html lang="en">
-  //     <head>
-  //       <meta charset="UTF-8" />
-  //       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  //       <title>CityFlow</title>
-  //       <link
-  //         rel="stylesheet"
-  //         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-  //       />
-  //       <script>
-  //         window.input = ${input};
-  //         window.config = ${config};
-  //       </script>
-  //     </head>
-  //     <body style="margin: 0; padding: 0; overflow: hidden;">
-  //       ${html}
-  //     </body>
-  // `;
   fs.writeFileSync(path.join(distFolder, '../index.html'), html);
   return html;
 };
