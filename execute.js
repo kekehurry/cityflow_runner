@@ -277,7 +277,10 @@ const compile = async (entryFile) => {
         if (err) {
           reject(err);
         } else if (stats.hasErrors()) {
-          reject(stats.compilation.errors);
+          const errors = stats.compilation.errors
+            .map((e) => e.message || e)
+            .join('\n');
+          reject(new Error(errors));
         } else {
           const bundleFilePath = path.join(distFolder, 'bundle.js');
           const html = createHtml(bundleFilePath);

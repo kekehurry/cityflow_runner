@@ -2,7 +2,6 @@
 
 # Configuration file
 CONFIG_FILE="/cityflow_runner/workflow/setup.json"
-conda activate base
 
 # Check if the configuration file exists
 if [[ ! -f "$CONFIG_FILE" ]]; then
