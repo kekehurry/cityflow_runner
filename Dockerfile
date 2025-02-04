@@ -17,7 +17,4 @@ RUN conda env update -n base --file environment.yml --prune && \
     npm install && \
     chmod +x install.sh
 
-ENTRYPOINT ["install.sh"]
-
-# Set conda env activation and start command
-CMD ["/bin/bash"]
+CMD ["install.sh"]
