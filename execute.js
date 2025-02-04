@@ -287,7 +287,9 @@ const compile = async (entryFile) => {
     });
   };
 
-  const bundleFile = await runWebpack(webpackConfig);
+  const bundleFile = await runWebpack(webpackConfig).catch((error) => {
+    throw new Error(`Webpack error: ${error.message}`);
+  });
   return bundleFile;
 };
 

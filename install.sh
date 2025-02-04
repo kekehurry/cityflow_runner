@@ -45,4 +45,4 @@ else
   echo "No pip packages to install."
 fi
 
-echo "Installation complete!"
+echo "Setup Completed!"

@@ -17,4 +17,4 @@ RUN conda env update -n base --file environment.yml --prune && \
     npm install && \
     chmod +x install.sh
 
-CMD ["install.sh"]
+CMD ["/bin/bash", "-c", "export DEBIAN_FRONTEND=noninteractive && ./install.sh"]
