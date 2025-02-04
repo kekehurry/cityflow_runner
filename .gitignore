@@ -6,3 +6,7 @@ __pycache__
 test
 setup.json
 data.db
+
+
+.github/workflows/build_main.yml
+.github/workflows/build_full.yml
