@@ -23,6 +23,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /cityflow_runner/workflow
 
+ENTRYPOINT ["/bin/bash", "-c"]
+
 # Set conda env activation and start command
-ENTRYPOINT ["/bin/bash -c '/cityflow_runner/install.sh' "]
+CMD ["/cityflow_runner/install.sh"]
 
