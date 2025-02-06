@@ -1,14 +1,18 @@
 node_modules
-example_js
-example_py
+
 Dockerfile
 package-lock.json
+.github
+.git
+*.DS_Store
+
+example_js
+example_py
+example_setup.yml
 
 readme.md
-setup.json
+
 data.db
 dist
 test
 
-.git
-*.DS_Store

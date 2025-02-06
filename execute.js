@@ -285,7 +285,9 @@ if (compileFlag) {
     const htmlFile = path.join(workdir, 'index.html');
     fs.writeFileSync(
       htmlFile,
-      `<div id="iframe_root">Compile Error: ${error.message}</div>`
+      `
+      <p style="color:red; font-size: \`{12/window.zoom}px\`">${error.message}</p>
+      `
     );
   }
 }
