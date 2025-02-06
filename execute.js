@@ -77,6 +77,7 @@ const wrappedCode = (entryFile) => {
   let moduleCode = processImports(`
   import ReactDOM from 'react-dom';
   import React, { useEffect, useState } from 'react';
+  import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
   `);
   entryCode = fs.readFileSync(entryFile, 'utf8');
   moduleCode += processImports(entryCode) + '\n';
@@ -147,6 +148,7 @@ const wrappedCode = (entryFile) => {
   ${moduleCode}
   // Define a wrapper component for the dynamically injected module
   const IframeApp = () => {
+
     const [input, setInput] = useState(window.input||null);
     const [config, setConfig] = useState(window.config||null);
     const [output, setOutput] = useState(null);
@@ -181,8 +183,16 @@ const wrappedCode = (entryFile) => {
 
     const module = React.createElement(${moduleName}, props);
 
+    const theme = createTheme({
+      typography: window.typography,
+      palette: window.palette,
+    });
+
     return (
-        props && props.config && module
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {props && props.config && module}
+      </ThemeProvider>
     );
   };
 
