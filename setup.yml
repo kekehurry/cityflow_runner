@@ -1,4 +1,2 @@
-conda:
-  - numpy
-  - pandas
-  - scipy
+npm:
+  - d3

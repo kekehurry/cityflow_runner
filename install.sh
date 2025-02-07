@@ -7,6 +7,7 @@ cd /cityflow_runner
 
 CONFIG_FILE="/cityflow_runner/workflow/setup.yml"
 
+
 # Check if the configuration file exists
 if [[ ! -f "$CONFIG_FILE" ]]; then
   echo "Configuration file $CONFIG_FILE not found!"
@@ -34,9 +35,7 @@ fi
 # Install conda packages
 if [[ -n "$CONDA_PACKAGES" ]]; then
   echo "Installing conda packages..."
-  for pkg in $CONDA_PACKAGES; do
-    conda install -y "$pkg"
-  done
+  conda install -y $CONDA_PACKAGES
 else
   echo "No conda packages to install."
 fi
@@ -44,9 +43,7 @@ fi
 # Install npm packages
 if [[ -n "$NPM_PACKAGES" ]]; then
   echo "Installing npm packages..."
-  for pkg in $NPM_PACKAGES; do
-    npm install "$pkg"
-  done
+  npm install $NPM_PACKAGES
 else
   echo "No npm packages to install."
 fi
@@ -54,9 +51,7 @@ fi
 # Install pip packages
 if [[ -n "$PIP_PACKAGES" ]]; then
   echo "Installing pip packages..."
-  for pkg in $PIP_PACKAGES; do
-    pip3 install "$pkg" --root-user-action ignore
-  done
+  pip3 install $PIP_PACKAGE --root-user-action ignore
 else
   echo "No pip packages to install."
 fi
