@@ -266,7 +266,7 @@ const compile = async (entryFile) => {
   };
 
   const bundleFile = await runWebpack(webpackConfig).catch((error) => {
-    throw new Error(`Webpack error: ${error.message}`);
+    throw new Error(error);
   });
   return bundleFile;
 };
@@ -278,16 +278,5 @@ const compileFlag = args.includes('--compile');
 const entryFile = path.join(workdir, 'entrypoint.js');
 
 if (compileFlag) {
-  try {
-    compile(entryFile);
-  } catch (error) {
-    console.log(error);
-    const htmlFile = path.join(workdir, 'index.html');
-    fs.writeFileSync(
-      htmlFile,
-      `
-      <p style="color:red; font-size: \`{12/window.zoom}px\`">${error.message}</p>
-      `
-    );
-  }
+  compile(entryFile);
 }

@@ -3,6 +3,7 @@
 # Configuration file
 eval "$(conda shell.bash hook)" && conda activate base
 
+cd /cityflow_runner
 
 CONFIG_FILE="/cityflow_runner/workflow/setup.yml"
 
@@ -44,7 +45,7 @@ fi
 if [[ -n "$NPM_PACKAGES" ]]; then
   echo "Installing npm packages..."
   for pkg in $NPM_PACKAGES; do
-    npm install -g "$pkg"
+    npm install "$pkg"
   done
 else
   echo "No npm packages to install."
@@ -60,4 +61,5 @@ else
   echo "No pip packages to install."
 fi
 
+cd /cityflow_runner/workflow
 echo "Setup Completed!"
