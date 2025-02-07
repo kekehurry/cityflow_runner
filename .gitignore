@@ -9,4 +9,4 @@ data.db
 
 
 .github/workflows/build_main.yml
-.github/workflows/build_full.yml
+.github/workflows/build_light.yml
