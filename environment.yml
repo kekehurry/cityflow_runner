@@ -2,3 +2,10 @@ channels:
   - conda-forge
 dependencies:
   - python=3.12
+  - osmnx
+  - mesa
+  - pip:
+    - geopandas
+    - seaborn
+    - mesa_geo
+    - momepy
