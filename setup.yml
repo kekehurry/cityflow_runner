@@ -1,2 +1,9 @@
+conda:
+  - mesa
+
 npm:
   - d3
+
+pip:
+  - geopandas
+  - mesa

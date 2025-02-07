@@ -3,10 +3,13 @@
 # Configuration file
 eval "$(conda shell.bash hook)" && conda activate base
 
-cd /cityflow_runner
+# cd /cityflow_runner
 
-CONFIG_FILE="/cityflow_runner/workflow/setup.yml"
+# CONFIG_FILE="/cityflow_runner/workflow/setup.yml"
 
+# cd /cityflow_runner
+
+CONFIG_FILE="setup.yml"
 
 # Check if the configuration file exists
 if [[ ! -f "$CONFIG_FILE" ]]; then
@@ -51,7 +54,7 @@ fi
 # Install pip packages
 if [[ -n "$PIP_PACKAGES" ]]; then
   echo "Installing pip packages..."
-  pip3 install $PIP_PACKAGE --root-user-action ignore
+  pip3 install $PIP_PACKAGES --root-user-action ignore
 else
   echo "No pip packages to install."
 fi
