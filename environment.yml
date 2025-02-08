@@ -4,8 +4,7 @@ dependencies:
   - python=3.12
   - osmnx
   - mesa
+  - momepy
   - pip:
-    - geopandas
     - seaborn
     - mesa_geo
-    - momepy
