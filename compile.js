@@ -191,7 +191,7 @@ const wrappedCode = (entryFile) => {
     return (
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {props && props.config && module}
+        {module}
       </ThemeProvider>
     );
   };
@@ -273,10 +273,7 @@ const compile = async (entryFile) => {
 
 const args = process.argv.slice(2);
 const workdir = path.resolve(args.find((arg) => !arg.startsWith('--')) || './');
-const compileFlag = args.includes('--compile');
 
 const entryFile = path.join(workdir, 'entrypoint.js');
 
-if (compileFlag) {
-  compile(entryFile);
-}
+compile(entryFile);
