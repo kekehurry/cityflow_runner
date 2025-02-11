@@ -52,7 +52,12 @@ const wrap = (entryFile) => {
       return (
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Module />
+          <Module 
+            input={input}
+            config={config}
+            setConfig={setConfig}
+            setOutput={setOutput}
+          />
         </ThemeProvider>
       );
     }
