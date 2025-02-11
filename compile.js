@@ -65,7 +65,6 @@ const wrap = (entryFile) => {
     document.addEventListener('DOMContentLoaded', () => {
       const element = document.getElementById('iframe_root');
       if (element) {
-        console.log('Rendering iframe app');
         ReactDOM.render(<IframeApp />, element);
       }
     });
