@@ -1,5 +1,4 @@
-.github/workflows/build_main.yml merge=ours
+.github/workflows/build_full.yml merge=ours
 .gitignore merge=ours
-
-package.json merge=ours
 environment.yml merge=ours
+package.json merge=ours
