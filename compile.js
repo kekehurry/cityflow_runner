@@ -7,6 +7,7 @@ const wrap = (entryFile) => {
   const appPath = path.join(dirName, 'app.js');
   const app = `
     import ReactDOM from 'react-dom';
+    import { createRoot } from 'react-dom/client';
     import React, { useEffect, useState } from 'react';
     import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
     import Module from './entrypoint';
@@ -65,7 +66,8 @@ const wrap = (entryFile) => {
     document.addEventListener('DOMContentLoaded', () => {
       const element = document.getElementById('iframe_root');
       if (element) {
-        ReactDOM.render(<IframeApp />, element);
+        const root = createRoot(element);
+        root.render(<IframeApp />);
       }
     });
 `;
@@ -112,7 +114,8 @@ const pack = async (workdir) => {
   const distFolder = path.join(workdir, 'dist');
   // Basic webpack config
   const webpackConfig = {
-    mode: 'production',
+    mode: 'development',
+    devtool: 'inline-source-map',
     entry: appPath,
     output: {
       path: distFolder,
@@ -140,7 +143,7 @@ const pack = async (workdir) => {
       ],
     },
     optimization: {
-      minimize: true,
+      minimize: false,
     },
   };
 
